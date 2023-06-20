@@ -17,3 +17,5 @@ squat_origin/
 *.onnx
 
 *.zip
+
+.idea/

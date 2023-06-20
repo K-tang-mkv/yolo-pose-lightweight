@@ -19,3 +19,5 @@ squat_origin/
 *.zip
 
 .idea/
+
+_pycache_/

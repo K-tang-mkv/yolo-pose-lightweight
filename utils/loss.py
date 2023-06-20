@@ -3,7 +3,7 @@
 import torch
 import torch.nn as nn
 
-from utils.metrics import bbox_iou
+from utils.general import bbox_iou
 from utils.torch_utils import is_parallel
 
 
@@ -87,15 +87,16 @@ class QFocalLoss(nn.Module):
 
 class ComputeLoss:
     # Compute losses
-    def __init__(self, model, autobalance=False):
+    def __init__(self, model, autobalance=False, kpt_label=False):
         super(ComputeLoss, self).__init__()
-        self.sort_obj_iou = False
+        self.kpt_label = kpt_label
         device = next(model.parameters()).device  # get model device
         h = model.hyp  # hyperparameters
 
         # Define criteria
         BCEcls = nn.BCEWithLogitsLoss(pos_weight=torch.tensor([h['cls_pw']], device=device))
         BCEobj = nn.BCEWithLogitsLoss(pos_weight=torch.tensor([h['obj_pw']], device=device))
+        BCE_kptv = nn.BCEWithLogitsLoss(pos_weight=torch.tensor([h['obj_pw']], device=device))
 
         # Class label smoothing https://arxiv.org/pdf/1902.04103.pdf eqn 3
         self.cp, self.cn = smooth_BCE(eps=h.get('label_smoothing', 0.0))  # positive, negative BCE targets
@@ -108,14 +109,15 @@ class ComputeLoss:
         det = model.module.model[-1] if is_parallel(model) else model.model[-1]  # Detect() module
         self.balance = {3: [4.0, 1.0, 0.4]}.get(det.nl, [4.0, 1.0, 0.25, 0.06, .02])  # P3-P7
         self.ssi = list(det.stride).index(16) if autobalance else 0  # stride 16 index
-        self.BCEcls, self.BCEobj, self.gr, self.hyp, self.autobalance = BCEcls, BCEobj, 1.0, h, autobalance
-        for k in 'na', 'nc', 'nl', 'anchors':
+        self.BCEcls, self.BCEobj, self.gr, self.hyp, self.autobalance = BCEcls, BCEobj, model.gr, h, autobalance
+        for k in 'na', 'nc', 'nl', 'anchors', 'nkpt':
             setattr(self, k, getattr(det, k))
 
     def __call__(self, p, targets):  # predictions, targets, model
         device = targets.device
-        lcls, lbox, lobj = torch.zeros(1, device=device), torch.zeros(1, device=device), torch.zeros(1, device=device)
-        tcls, tbox, indices, anchors = self.build_targets(p, targets)  # targets
+        lcls, lbox, lobj, lkpt, lkptv = torch.zeros(1, device=device), torch.zeros(1, device=device), torch.zeros(1, device=device), torch.zeros(1, device=device), torch.zeros(1, device=device)
+        sigmas = torch.tensor([.26, .25, .25, .35, .35, .79, .79, .72, .72, .62, .62, 1.07, 1.07, .87, .87, .89, .89], device=device) / 10.0
+        tcls, tbox, tkpt, indices, anchors = self.build_targets(p, targets)  # targets
 
         # Losses
         for i, pi in enumerate(p):  # layer index, layer predictions
@@ -129,16 +131,27 @@ class ComputeLoss:
                 # Regression
                 pxy = ps[:, :2].sigmoid() * 2. - 0.5
                 pwh = (ps[:, 2:4].sigmoid() * 2) ** 2 * anchors[i]
-                pbox = torch.cat((pxy, pwh), 1)  # predicted box
+                pbox = torch.cat((pxy, pwh), 1)  # predicted box-
                 iou = bbox_iou(pbox.T, tbox[i], x1y1x2y2=False, CIoU=True)  # iou(prediction, target)
                 lbox += (1.0 - iou).mean()  # iou loss
-
+                if self.kpt_label:
+                    #Direct kpt prediction
+                    pkpt_x = ps[:, 6::3] * 2. - 0.5
+                    pkpt_y = ps[:, 7::3] * 2. - 0.5
+                    pkpt_score = ps[:, 8::3]
+                    #mask
+                    kpt_mask = (tkpt[i][:, 0::2] != 0)
+                    lkptv += self.BCEcls(pkpt_score, kpt_mask.float()) 
+                    #l2 distance based loss
+                    #lkpt += (((pkpt-tkpt[i])*kpt_mask)**2).mean()  #Try to make this loss based on distance instead of ordinary difference
+                    #oks based loss
+                    d = (pkpt_x-tkpt[i][:,0::2])**2 + (pkpt_y-tkpt[i][:,1::2])**2
+                    s = torch.prod(tbox[i][:,-2:], dim=1, keepdim=True)
+                    kpt_loss_factor = (torch.sum(kpt_mask != 0) + torch.sum(kpt_mask == 0))/torch.sum(kpt_mask != 0)
+                    lkpt += kpt_loss_factor*((1 - torch.exp(-d/(s*(4*sigmas**2)+1e-9)))*kpt_mask).mean()
+                    # lkpt += kpt_loss_factor * ((1 - torch.exp(-d / (2 * (s * sigmas) ** 2 + 1e-9))) * kpt_mask).mean()
                 # Objectness
-                score_iou = iou.detach().clamp(0).type(tobj.dtype)
-                if self.sort_obj_iou:
-                    sort_id = torch.argsort(score_iou)
-                    b, a, gj, gi, score_iou = b[sort_id], a[sort_id], gj[sort_id], gi[sort_id], score_iou[sort_id]
-                tobj[b, a, gj, gi] = (1.0 - self.gr) + self.gr * score_iou  # iou ratio
+                tobj[b, a, gj, gi] = (1.0 - self.gr) + self.gr * iou.detach().clamp(0).type(tobj.dtype)  # iou ratio
 
                 # Classification
                 if self.nc > 1:  # cls loss (only if multiple classes)
@@ -160,15 +173,21 @@ class ComputeLoss:
         lbox *= self.hyp['box']
         lobj *= self.hyp['obj']
         lcls *= self.hyp['cls']
+        lkptv *= self.hyp['cls']
+        lkpt *= self.hyp['kpt']
         bs = tobj.shape[0]  # batch size
 
-        return (lbox + lobj + lcls) * bs, torch.cat((lbox, lobj, lcls)).detach()
+        loss = lbox + lobj + lcls + lkpt + lkptv
+        return loss * bs, torch.cat((lbox, lobj, lcls, lkpt, lkptv, loss)).detach()
 
     def build_targets(self, p, targets):
         # Build targets for compute_loss(), input targets(image,class,x,y,w,h)
         na, nt = self.na, targets.shape[0]  # number of anchors, targets
-        tcls, tbox, indices, anch = [], [], [], []
-        gain = torch.ones(7, device=targets.device)  # normalized to gridspace gain
+        tcls, tbox, tkpt, indices, anch = [], [], [], [], []
+        if self.kpt_label:
+            gain = torch.ones(41, device=targets.device)  # normalized to gridspace gain
+        else:
+            gain = torch.ones(7, device=targets.device)  # normalized to gridspace gain
         ai = torch.arange(na, device=targets.device).float().view(na, 1).repeat(1, nt)  # same as .repeat_interleave(nt)
         targets = torch.cat((targets.repeat(na, 1, 1), ai[:, :, None]), 2)  # append anchor indices
 
@@ -180,7 +199,10 @@ class ComputeLoss:
 
         for i in range(self.nl):
             anchors = self.anchors[i]
-            gain[2:6] = torch.tensor(p[i].shape)[[3, 2, 3, 2]]  # xyxy gain
+            if self.kpt_label:
+                gain[2:40] = torch.tensor(p[i].shape)[19*[3, 2]]  # xyxy gain 获得高和宽
+            else:
+                gain[2:6] = torch.tensor(p[i].shape)[[3, 2, 3, 2]]  # xyxy gain
 
             # Match targets to anchors
             t = targets * gain
@@ -211,10 +233,23 @@ class ComputeLoss:
             gi, gj = gij.T  # grid xy indices
 
             # Append
-            a = t[:, 6].long()  # anchor indices
-            indices.append((b, a, gj.clamp_(0, gain[3] - 1), gi.clamp_(0, gain[2] - 1)))  # image, anchor, grid indices
+            a = t[:, -1].long()  # anchor indices
+            gain_copy = gain.long()
+            indices.append((b, a, gj.clamp_(0, gain_copy[3] - 1), gi.clamp_(0, gain_copy[2] - 1)))  # image, anchor, grid indices
             tbox.append(torch.cat((gxy - gij, gwh), 1))  # box
+            if self.kpt_label:
+                for kpt in range(self.nkpt):
+                    t[:, 6+2*kpt: 6+2*(kpt+1)][t[:,6+2*kpt: 6+2*(kpt+1)] !=0] -= gij[t[:,6+2*kpt: 6+2*(kpt+1)] !=0]
+                tkpt.append(t[:, 6:-1])
             anch.append(anchors[a])  # anchors
             tcls.append(c)  # class
 
-        return tcls, tbox, indices, anch
+        return tcls, tbox, tkpt, indices, anch
+
+
+if __name__ == "__main__":
+    model = torch.load("./../best.pt", map_location="cpu")
+    computeloss = ComputeLoss(model.model, kpt_label=True)
+    img = torch.randn((1, 3, 192, 192))
+    pred = model.model(img)
+    print("all good")

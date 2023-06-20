@@ -1,0 +1,451 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="a67fadce-6ac1-4817-bd7d-76c7e6b518d6" name="变更" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/edgeai-yolov5.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/Project_Default.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/inspectionProfiles/profiles_settings.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/README_data.md" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/archive.zip" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/best-int8.tflite" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/best.onnx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/best.pt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/best.torchscript.pt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/cocoyd.pt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/data/coco_kpts.yaml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/data/coco_kpts_128.yaml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/data/scripts/get_voc.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/data/voc.yaml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/ghost_pose.onnx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/labels.zip" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/mbn_pose.onnx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/models/export.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/models/export_beta.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/models/hub/yolov5l6_kpts.yaml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/models/hub/yolov5l6_kpts_ti_lite.yaml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/models/hub/yolov5m6_kpts.yaml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/models/hub/yolov5m6_kpts_ti_lite.yaml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/models/hub/yolov5s6_kpts.yaml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/models/hub/yolov5s6_kpts_ti_lite.yaml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/models/tf.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/onnx_inference/img.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/onnx_inference/sample_ips.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/onnx_inference/yolo_pose_onnx_inference.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/posedet_offical_640-fp16.tflite" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/posedet_offical_640-int8.tflite" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/posedet_offical_640.onnx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/posedet_offical_640.pt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/posedet_offical_640.torchscript.pt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/posedet_offical_640_saved_model/fingerprint.pb" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/posedet_offical_640_saved_model/saved_model.pb" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/posedet_offical_640_saved_model/variables/variables.data-00000-of-00001" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/posedet_offical_640_saved_model/variables/variables.index" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/remove_boximg_reserve_origin.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/test.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/test.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/tflite_detect.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/utils/dataloaders.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/utils/downloads.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/utils/figures/000000390555_AE.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/utils/figures/000000390555_YP.jpg" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/utils/figures/AP50_GMACS_val.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/utils/figures/AdobeStock.gif" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/utils/general_exp.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/weights/download_weights.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/xml2yolo.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/yolopose.pt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/yolopose.torchscript.pt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/yolov5s.pt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/yolov5s6_pose_640_ti_lite_54p9_82p2.onnx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.dockerignore" beforeDir="false" afterPath="$PROJECT_DIR$/.dockerignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitattributes" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.github/FUNDING.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.github/ISSUE_TEMPLATE/bug-report.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.github/ISSUE_TEMPLATE/feature-request.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.github/ISSUE_TEMPLATE/question.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.github/dependabot.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.github/workflows/ci-testing.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.github/workflows/codeql-analysis.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.github/workflows/greetings.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.github/workflows/rebase.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.github/workflows/stale.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/CONTRIBUTING.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/Dockerfile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README_ultralytics.md" beforeDir="false" afterPath="$PROJECT_DIR$/README_ultralytics.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/Argoverse_HD.yaml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/GlobalWheat2020.yaml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/Objects365.yaml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/SKU-110K.yaml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/VOC.yaml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/VisDrone.yaml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/coco.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/data/coco.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/coco128.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/data/coco128.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/hyps/hyp.finetune.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/data/hyp.finetune.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/hyps/hyp.finetune_objects365.yaml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/hyps/hyp.scratch-p6.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/data/hyp.scratch_lite.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/hyps/hyp.scratch.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/data/hyp.scratch.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/scripts/download_weights.sh" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/scripts/get_coco.sh" beforeDir="false" afterPath="$PROJECT_DIR$/data/scripts/get_coco.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/scripts/get_coco128.sh" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/xView.yaml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/detect.py" beforeDir="false" afterPath="$PROJECT_DIR$/detect.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/export.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/hubconf.py" beforeDir="false" afterPath="$PROJECT_DIR$/hubconf.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/make_release.sh" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/models/common.py" beforeDir="false" afterPath="$PROJECT_DIR$/models/common.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/models/experimental.py" beforeDir="false" afterPath="$PROJECT_DIR$/models/experimental.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/models/hub/yolov3-spp.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/models/hub/yolov3-spp.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/models/hub/yolov3-tiny.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/models/hub/yolov3-tiny.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/models/hub/yolov3.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/models/hub/yolov3.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/models/hub/yolov5-fpn.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/models/hub/yolov5-fpn.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/models/hub/yolov5-p2.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/models/hub/yolov5-p2.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/models/hub/yolov5-p6.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/models/hub/yolov5-p6.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/models/hub/yolov5-p7.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/models/hub/yolov5-p7.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/models/hub/yolov5-panet.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/models/hub/yolov5-panet.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/models/hub/yolov5l6.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/models/hub/yolov5l6.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/models/hub/yolov5m6.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/models/hub/yolov5m6.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/models/hub/yolov5s-transformer.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/models/hub/yolov5s-transformer.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/models/hub/yolov5s6.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/models/hub/yolov5s6.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/models/hub/yolov5x6.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/models/hub/yolov5x6.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/models/yolo.py" beforeDir="false" afterPath="$PROJECT_DIR$/models/yolo.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/models/yolov5l.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/models/yolov5l.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/models/yolov5m.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/models/yolov5m.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/models/yolov5s.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/models/yolov5s.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/models/yolov5x.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/models/yolov5x.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pretrained_models/checkpoints/detection/coco/edgeai-yolov5/yolov5l6_640_ti_lite/autogen_anchor" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pretrained_models/checkpoints/detection/coco/edgeai-yolov5/yolov5l6_640_ti_lite/hyp.yaml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pretrained_models/checkpoints/detection/coco/edgeai-yolov5/yolov5l6_640_ti_lite/opt.yaml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pretrained_models/checkpoints/detection/coco/edgeai-yolov5/yolov5l6_640_ti_lite/weights/best.pt.link" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pretrained_models/checkpoints/detection/coco/edgeai-yolov5/yolov5l6_640_ti_lite/weights/last.pt.link" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pretrained_models/checkpoints/detection/coco/edgeai-yolov5/yolov5m6_640_ti_lite/autogen_anchor" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pretrained_models/checkpoints/detection/coco/edgeai-yolov5/yolov5m6_640_ti_lite/hyp.yaml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pretrained_models/checkpoints/detection/coco/edgeai-yolov5/yolov5m6_640_ti_lite/opt.yaml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pretrained_models/checkpoints/detection/coco/edgeai-yolov5/yolov5m6_640_ti_lite/weights/best.pt.link" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pretrained_models/checkpoints/detection/coco/edgeai-yolov5/yolov5m6_640_ti_lite/weights/last.pt.link" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pretrained_models/checkpoints/detection/coco/edgeai-yolov5/yolov5s6_384_ti_lite/autogen_anchor" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pretrained_models/checkpoints/detection/coco/edgeai-yolov5/yolov5s6_384_ti_lite/hyp.yaml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pretrained_models/checkpoints/detection/coco/edgeai-yolov5/yolov5s6_384_ti_lite/opt.yaml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pretrained_models/checkpoints/detection/coco/edgeai-yolov5/yolov5s6_384_ti_lite/weights/best.pt.link" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pretrained_models/checkpoints/detection/coco/edgeai-yolov5/yolov5s6_384_ti_lite/weights/last.pt.link" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pretrained_models/checkpoints/detection/coco/edgeai-yolov5/yolov5s6_640_ti_lite/autogen_anchor" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pretrained_models/checkpoints/detection/coco/edgeai-yolov5/yolov5s6_640_ti_lite/hyp.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/hyp.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pretrained_models/checkpoints/detection/coco/edgeai-yolov5/yolov5s6_640_ti_lite/opt.yaml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pretrained_models/checkpoints/detection/coco/edgeai-yolov5/yolov5s6_640_ti_lite/weights/best.pt.link" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pretrained_models/checkpoints/detection/coco/edgeai-yolov5/yolov5s6_640_ti_lite/weights/last.pt.link" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pretrained_models/checkpoints/keypoint/coco/edgeai-yolov5/yolov5m6_640_ti_lite_60p5_86p8/hyp.yaml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pretrained_models/checkpoints/keypoint/coco/edgeai-yolov5/yolov5m6_640_ti_lite_60p5_86p8/opt.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/opt.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pretrained_models/checkpoints/keypoint/coco/edgeai-yolov5/yolov5m6_640_ti_lite_60p5_86p8/results.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pretrained_models/checkpoints/keypoint/coco/edgeai-yolov5/yolov5m6_960_ti_lite_65p9_88p6/hyp.yaml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pretrained_models/checkpoints/keypoint/coco/edgeai-yolov5/yolov5m6_960_ti_lite_65p9_88p6/opt.yaml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pretrained_models/checkpoints/keypoint/coco/edgeai-yolov5/yolov5m6_960_ti_lite_65p9_88p6/results.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pretrained_models/checkpoints/keypoint/coco/edgeai-yolov5/yolov5s6_1280_ti_lite_60p9_85p9/hyp.yaml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pretrained_models/checkpoints/keypoint/coco/edgeai-yolov5/yolov5s6_1280_ti_lite_60p9_85p9/opt.yaml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pretrained_models/checkpoints/keypoint/coco/edgeai-yolov5/yolov5s6_1280_ti_lite_60p9_85p9/results.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pretrained_models/checkpoints/keypoint/coco/edgeai-yolov5/yolov5s6_640_ti_lite_54p9_82p2/hyp.yaml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pretrained_models/checkpoints/keypoint/coco/edgeai-yolov5/yolov5s6_640_ti_lite_54p9_82p2/opt.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/opt (2).yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pretrained_models/checkpoints/keypoint/coco/edgeai-yolov5/yolov5s6_640_ti_lite_54p9_82p2/results.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pretrained_models/checkpoints/keypoint/coco/edgeai-yolov5/yolov5s6_960_ti_lite_59p7_85p6/hyp.yaml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pretrained_models/checkpoints/keypoint/coco/edgeai-yolov5/yolov5s6_960_ti_lite_59p7_85p6/opt.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/opt (1).yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pretrained_models/checkpoints/keypoint/coco/edgeai-yolov5/yolov5s6_960_ti_lite_59p7_85p6/results.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pretrained_models/modelartifacts/8bits/artifacts.csv" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pretrained_models/modelartifacts/8bits/artifacts.list" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pretrained_models/modelartifacts/8bits/artifacts.yaml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pretrained_models/modelartifacts/8bits/extract.sh" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pretrained_models/modelartifacts/8bits/kd-7040_onnxrt_coco_edgeai-yolov5_yolov5s6_pose_640_ti_lite_54p9_82p2_onnx.tar.gz.link" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pretrained_models/modelartifacts/8bits/kd-7050_onnxrt_coco_edgeai-yolov5_yolov5s6_pose_640_ti_lite_54p9_82p2_onnx.tar.gz.link" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pretrained_models/modelartifacts/8bits/od-8100_onnxrt_coco_edgeai-yolov5_yolov5s6_640_ti_lite_37p4_56p0_onnx.tar.gz.link" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pretrained_models/modelartifacts/8bits/od-8100_onnxrt_weights_yolov5s6_640_ti_lite_37p4_56p0_onnx.tar.gz.link" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pretrained_models/modelartifacts/8bits/od-8110_onnxrt_coco_edgeai-yolov5_yolov5s6_384_ti_lite_32p8_51p2_onnx.tar.gz.link" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pretrained_models/modelartifacts/8bits/od-8110_onnxrt_weights_yolov5s6_384_ti_lite_32p8_51p2_onnx.tar.gz.link" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pretrained_models/modelartifacts/8bits/od-8120_onnxrt_coco_edgeai-yolov5_yolov5m6_640_ti_lite_44p1_62p9_onnx.tar.gz.link" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pretrained_models/modelartifacts/8bits/od-8120_onnxrt_weights_yolov5m6_640_ti_lite_44p1_62p9_onnx.tar.gz.link" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pretrained_models/modelartifacts/8bits/od-8130_onnxrt_coco_edgeai-yolov5_yolov5l6_640_ti_lite_47p1_65p6_onnx.tar.gz.link" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pretrained_models/modelartifacts/8bits/od-8130_onnxrt_weights_yolov5l6_640_ti_lite_47p1_65p6_onnx.tar.gz.link" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pretrained_models/modelartifacts/8bits/od-8450_onnxrt_widerface_edgeai-yolov5_yolov5s6_640_ti_lite_71p53_onnx.tar.gz.link" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pretrained_models/modelartifacts/readme.txt" beforeDir="false" afterPath="$PROJECT_DIR$/data/coco_kpts_exp.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pretrained_models/models/detection/coco/edgeai-yolov5/yolov5l6_640_ti_lite_47p1_65p6.onnx.link" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pretrained_models/models/detection/coco/edgeai-yolov5/yolov5l6_640_ti_lite_47p1_65p6.pt.link" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pretrained_models/models/detection/coco/edgeai-yolov5/yolov5l6_640_ti_lite_metaarch.prototxt.link" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pretrained_models/models/detection/coco/edgeai-yolov5/yolov5m6_640_ti_lite_44p1_62p9.onnx.link" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pretrained_models/models/detection/coco/edgeai-yolov5/yolov5m6_640_ti_lite_44p1_62p9.pt.link" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pretrained_models/models/detection/coco/edgeai-yolov5/yolov5m6_640_ti_lite_metaarch.prototxt.link" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pretrained_models/models/detection/coco/edgeai-yolov5/yolov5s6_384_ti_lite_32p8_51p2.onnx.link" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pretrained_models/models/detection/coco/edgeai-yolov5/yolov5s6_384_ti_lite_32p8_51p2.pt.link" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pretrained_models/models/detection/coco/edgeai-yolov5/yolov5s6_384_ti_lite_metaarch.prototxt.link" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pretrained_models/models/detection/coco/edgeai-yolov5/yolov5s6_640_ti_lite_37p4_56p0.onnx.link" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pretrained_models/models/detection/coco/edgeai-yolov5/yolov5s6_640_ti_lite_37p4_56p0.pt.link" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pretrained_models/models/detection/coco/edgeai-yolov5/yolov5s6_640_ti_lite_metaarch.prototxt.link" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pretrained_models/models/detection/widerface/edgeai-yolov5/yolov5s6_640_ti_lite_71p53.onnx.link" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pretrained_models/models/detection/widerface/edgeai-yolov5/yolov5s6_640_ti_lite_metaarch.prototxt.link" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pretrained_models/models/keypoint/coco/edgeai-yolov5/yolov5s6_pose_640_ti_lite_54p9_82p2.onnx.link" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/pretrained_models/models/keypoint/coco/edgeai-yolov5/yolov5s6_pose_640_ti_lite_metaarch.prototxt.link" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/requirements.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/requirements_modelmaker.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/run_create_modelartifacts_links.sh" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/run_create_models_links.sh" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/run_download_modelartifacts.sh" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/scripts/make_link_files.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/setup.sh" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/setup_for_modelmaker.sh" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/train.py" beforeDir="false" afterPath="$PROJECT_DIR$/train.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tutorial.ipynb" beforeDir="false" afterPath="$PROJECT_DIR$/tutorial.ipynb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/utils/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/utils/augmentations.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils/augmentations.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/utils/autoanchor.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils/autoanchor.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/utils/aws/resume.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils/aws/resume.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/utils/aws/userdata.sh" beforeDir="false" afterPath="$PROJECT_DIR$/utils/aws/userdata.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/utils/datasets.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils/datasets.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/utils/figures/Focus.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/utils/figures/mAP_FLOPS.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/utils/figures/max_pool.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/utils/flask_rest_api/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/utils/flask_rest_api/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/utils/general.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils/general.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/utils/google_app_engine/additional_requirements.txt" beforeDir="false" afterPath="$PROJECT_DIR$/utils/google_app_engine/additional_requirements.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/utils/google_utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils/google_utils.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/utils/loggers/__init__.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/utils/loggers/wandb/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/models/onnx2tflite.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/utils/loggers/wandb/log_dataset.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils/wandb_logging/log_dataset.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/utils/loggers/wandb/sweep.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/utils/loggers/wandb/sweep.yaml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/utils/loggers/wandb/wandb_utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils/wandb_logging/wandb_utils.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/utils/loss.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils/loss.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/utils/metrics.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils/metrics.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/utils/misc.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/utils/plots.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils/plots.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/utils/proto/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils/wandb_logging/__init__.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/utils/proto/compile_proto.sh" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/utils/proto/pytorch2proto.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/utils/proto/tidl_meta_arch_yolov5.proto" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/utils/proto/tidl_meta_arch_yolov5_pb2.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/utils/torch_utils.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils/torch_utils.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/val.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/version.py" beforeDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProjectId" id="2QoJglZ4nvFipDUrp76mm8NN7BF" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "last_opened_file_path": "E:/edgeai-yolov5",
+    "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable"
+  }
+}]]></component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="E:\edgeai-yolov5\utils" />
+      <recent name="E:\edgeai-yolov5\models" />
+    </key>
+  </component>
+  <component name="RunManager" selected="Python.tflite_detect">
+    <configuration name="export" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="edgeai-yolov5" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/models" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/models/export.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="export_beta" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="edgeai-yolov5" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/models" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/models/export_beta.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="loss" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="edgeai-yolov5" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/utils" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/utils/loss.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="tflite_detect" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="edgeai-yolov5" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/tflite_detect.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="train" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="edgeai-yolov5" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/train.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Python.tflite_detect" />
+        <item itemvalue="Python.export_beta" />
+        <item itemvalue="Python.export" />
+        <item itemvalue="Python.train" />
+        <item itemvalue="Python.loss" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="应用程序级" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="默认任务">
+      <changelist id="a67fadce-6ac1-4817-bd7d-76c7e6b518d6" name="变更" comment="" />
+      <created>1686014116372</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1686014116372</updated>
+    </task>
+    <servers />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/xml2yolo.py</url>
+          <line>29</line>
+          <option name="timeStamp" value="25" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/detect.py</url>
+          <line>75</line>
+          <option name="timeStamp" value="33" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/models/yolo.py</url>
+          <line>114</line>
+          <option name="timeStamp" value="34" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/tflite_detect.py</url>
+          <line>33</line>
+          <option name="timeStamp" value="35" />
+        </line-breakpoint>
+        <line-breakpoint suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/models/tf.py</url>
+          <line>397</line>
+          <option name="timeStamp" value="39" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/utils/loss.py</url>
+          <line>254</line>
+          <option name="timeStamp" value="40" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/train.py</url>
+          <line>305</line>
+          <option name="timeStamp" value="46" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/models/tf.py</url>
+          <line>483</line>
+          <option name="timeStamp" value="48" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+    <watches-manager>
+      <configuration name="PythonConfigurationType">
+        <watch expression="model['model']" language="Python" />
+        <watch expression="tkpt[0].device" />
+      </configuration>
+    </watches-manager>
+  </component>
+</project>

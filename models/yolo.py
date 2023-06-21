@@ -48,7 +48,8 @@ class Detect(nn.Module):
         self.no_kpt = 3*self.nkpt ## number of outputs per anchor for keypoints
         self.no = self.no_det+self.no_kpt
         self.nl = len(anchors)  # number of detection layers
-        self.na = len(anchors[0]) // 2  # number of anchors
+        self.na = len(anchors[0]) // 2 # number of anchors
+        self.anchor_test = anchors
         self.grid = [torch.zeros(1)] * self.nl  # init grid
         self.flip_test = False
         a = torch.tensor(anchors).float().view(self.nl, -1, 2)

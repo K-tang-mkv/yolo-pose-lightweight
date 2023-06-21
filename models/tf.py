@@ -459,17 +459,17 @@ class TFDetect(keras.layers.Layer):
                     wh = (y[..., 2:4] * 2) ** 2 * tf.reshape(self.anchor_grid[i], (1, self.na, 1, 1, 2))  # wh
                     if self.nkpt != 0:
                         # 生成 shape 为 (bs, na, ny, nx, 17, 5) 的索引数组，用于更新 x_kpt 中的值
-                        indices = tf.stack(tf.meshgrid(tf.range(bs), tf.range(self.na), tf.range(ny), tf.range(nx), tf.range(51), indexing='ij'), axis=-1)
+                        # indices = tf.stack(tf.meshgrid(tf.range(bs), tf.range(self.na), tf.range(ny), tf.range(nx), tf.range(51), indexing='ij'), axis=-1)
                         # 生成 shape 为 (bs, na, ny, nx, 17, 3) 的更新数组
-                        updates = tf.concat([
+                        updates = tf.concat([-
                             (x_kpt[..., 0::3] * 2. - 0.5 + tf.tile(kpt_grid_x, [1, 1, 1, 1, 17])) * self.stride[i],
                             (x_kpt[..., 1::3] * 2. - 0.5 + tf.tile(kpt_grid_y, [1, 1, 1, 1, 17])) * self.stride[i],
                             tf.sigmoid(x_kpt[..., 2::3])
                         ], axis=-1)
                         # 使用 tf.tensor_scatter_nd_update 函数更新 x_kpt 中的值
-                        x_kpt = tf.tensor_scatter_nd_update(x_kpt, indices, updates)
+                        # x_kpt = tf.tensor_scatter_nd_update(x_kpt, indices, updates)
 
-                    y = tf.concat((xy, wh, y[..., 4:], x_kpt), axis=-1)
+                    y = tf.concat((xy, wh, y[..., 4:], updates), axis=-1)
 
                 else:  # for YOLOv5 on AWS Inferentia https://github.com/ultralytics/yolov5/pull/2953
                     xy = (y[..., 0:2] * 2. - 0.5 + self.grid[i]) * self.stride[i]  # xy
@@ -481,7 +481,7 @@ class TFDetect(keras.layers.Layer):
 
                 z.append(tf.reshape(y, (bs, -1, self.no)))
 
-        return x if self.training else (tf.concat(z, 1), x)
+        return x if self.training else tf.concat(z, 1)
 
     @staticmethod
     def _make_grid(nx=20, ny=20):

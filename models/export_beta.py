@@ -16,7 +16,7 @@ MACOS = platform.system() == 'Darwin'  # macOS environment
 def parse_opt():
     parser = argparse.ArgumentParser() # define a argument parser
     # add argument into the parser
-    parser.add_argument("--weights", type=str, default="../cocoyd.pt", help="model need to be export")
+    parser.add_argument("--weights", type=str, default="../ds_8w.pt", help="model need to be export")
     parser.add_argument("--data", type=str, default="../data/coco_kpts_exp.yaml", help=" ")
     parser.add_argument("--img-size", type=int, default=[192,192], help="input size need to be exported")
     parser.add_argument("--device", default="cpu", help='cuda device, i.e. 0 or 0,1,2,3 or cpu')
@@ -77,7 +77,7 @@ def export_saved_model(model,
                        topk_all=100,
                        iou_thres=0.45,
                        conf_thres=0.25,
-                       keras=False,
+                       keras=True,
                        prefix=colorstr('TensorFlow SavedModel:')):
     # YOLOv5 TensorFlow SavedModel export
     try:
@@ -101,20 +101,21 @@ def export_saved_model(model,
     keras_model = tf.keras.Model(inputs=inputs, outputs=outputs)
     keras_model.trainable = False
     keras_model.summary()
+    #
     if keras:
-        keras_model.save(f, save_format='tf')
-    else:
-        spec = tf.TensorSpec(keras_model.inputs[0].shape, keras_model.inputs[0].dtype)
-        m = tf.function(lambda x: keras_model(x))  # full model
-        m = m.get_concrete_function(spec)
-        frozen_func = convert_variables_to_constants_v2(m)
-        tfm = tf.Module()
-        tfm.__call__ = tf.function(lambda x: frozen_func(x)[:4] if tf_nms else frozen_func(x), [spec])
-        tfm.__call__(im)
-        tf.saved_model.save(tfm,
-                            f,
-                            options=tf.saved_model.SaveOptions(experimental_custom_gradients=False) if check_version(
-                                tf.__version__, '2.6') else tf.saved_model.SaveOptions())
+        keras_model.save("ds_8w_keras.h5", save_format='h5')
+    # else:
+    #     spec = tf.TensorSpec(keras_model.inputs[0].shape, keras_model.inputs[0].dtype)  # specifiction of input tensor
+    #     m = tf.function(lambda x: keras_model(x))  # full model
+    #     m = m.get_concrete_function(spec)
+    #     frozen_func = convert_variables_to_constants_v2(m)
+    #     tfm = tf.Module()
+    #     tfm.__call__ = tf.function(lambda x: frozen_func(x)[:4] if tf_nms else frozen_func(x), [spec])
+    #     tfm.__call__(im)
+    #     tf.saved_model.save(tfm,
+    #                         f,
+    #                         options=tf.saved_model.SaveOptions(experimental_custom_gradients=False) if check_version(
+    #                             tf.__version__, '2.6') else tf.saved_model.SaveOptions())
     return f, keras_model
 
 def export_tflite(keras_model, im, file, int8, data, nms, agnostic_nms, prefix=colorstr('TensorFlow Lite:')):
@@ -123,7 +124,7 @@ def export_tflite(keras_model, im, file, int8, data, nms, agnostic_nms, prefix=c
 
     print(f'\n{prefix} starting export with tensorflow {tf.__version__}...')
     batch_size, ch, *imgsz = list(im.shape)  # BCHW
-    f = str(file).replace('.pt', '-fp32.tflite')
+    f = str(file).replace('.pt', '-fp32-3output.tflite')
 
     converter = tf.lite.TFLiteConverter.from_keras_model(keras_model)
     converter.target_spec.supported_ops = [tf.lite.OpsSet.TFLITE_BUILTINS]
@@ -214,4 +215,5 @@ def run(weights, data, img_size=[192,192], device="cpu", include="onnx", export_
 
 if __name__ == "__main__":
     opt = parse_opt()
+
     run(**vars(opt))

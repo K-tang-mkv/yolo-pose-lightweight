@@ -6,7 +6,7 @@ import onnxruntime
 from tqdm import tqdm
 
 parser = argparse.ArgumentParser()
-parser.add_argument("--model-path", type=str, default="./yolov5s6_pose_640_ti_lite_54p9_82p2.onnx")
+parser.add_argument("--model-path", type=str, default="../cocoyd.onnx")
 parser.add_argument("--img-path", type=str, default="./sample_ips.txt")
 parser.add_argument("--dst-path", type=str, default="./sample_ops_onnxrt")
 args = parser.parse_args()
@@ -39,7 +39,7 @@ radius = 5
 
 def read_img(img_file, img_mean=127.5, img_scale=1/127.5):
     img = cv2.imread(img_file)[:, :, ::-1]
-    img = cv2.resize(img, (640,640), interpolation=cv2.INTER_LINEAR)
+    img = cv2.resize(img, (192,192), interpolation=cv2.INTER_LINEAR)
     img = (img - img_mean) * img_scale
     img = np.asarray(img, dtype=np.float32)
     img = np.expand_dims(img,0)

@@ -28,11 +28,11 @@ if __name__ == '__main__':
     parser.add_argument('--weights', type=str, default='../ds_8w.pt', help='weights path')
     parser.add_argument('--img-size', nargs='+', type=int, default=[192, 192], help='image size')  # height, width
     parser.add_argument('--batch-size', type=int, default=1, help='batch size')
-    parser.add_argument('--grid', action='store_true', help='export Detect() layer grid')
+    parser.add_argument('--grid', default=True, help='export Detect() layer grid')
     parser.add_argument('--device', default='cpu', help='cuda device, i.e. 0 or 0,1,2,3 or cpu')
     parser.add_argument('--dynamic', action='store_true', help='dynamic ONNX axes')  # ONNX-only
     parser.add_argument('--simplify', default=False, help='simplify ONNX model')  # ONNX-only
-    parser.add_argument('--export-nms', default=True, help='export the nms part in ONNX model')  # ONNX-only, #opt.grid has to be set True for nms export to work
+    parser.add_argument('--export-nms', default=False, help='export the nms part in ONNX model')  # ONNX-only, #opt.grid has to be set True for nms export to work
     opt = parser.parse_args()
     opt.img_size *= 2 if len(opt.img_size) == 1 else 1  # expand
     print(opt)

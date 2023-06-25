@@ -76,8 +76,9 @@ def post_process(img_file, dst_file, output, score_threshold=0.3):
     """
     det_bboxes, det_scores, det_labels, kpts = output[:, 0:4], output[:, 4], output[:, 5], output[:, 6:]
     img = cv2.imread(img_file)
+
     #To generate color based on det_label, to look into the codebase of Tensorflow object detection api.
-    dst_txt_file = dst_file.replace('png', 'txt')
+    dst_txt_file = dst_file.replace('jpg', 'txt')
     f = open(dst_txt_file, 'wt')
     for idx in range(len(det_bboxes)):
         det_bbox = det_bboxes[idx]

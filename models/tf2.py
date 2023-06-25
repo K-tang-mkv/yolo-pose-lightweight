@@ -1,15 +1,3 @@
-# YOLOv5 🚀 by Ultralytics, GPL-3.0 license
-"""
-TensorFlow, Keras and TFLite versions of YOLOv5
-Authored by https://github.com/zldrobit in PR https://github.com/ultralytics/yolov5/pull/1127
-
-Usage:
-    $ python models/tf.py --weights yolov5s.pt
-
-Export:
-    $ python export.py --weights yolov5s.pt --include saved_model pb tflite tfjs
-"""
-
 import argparse
 import sys
 from copy import deepcopy
@@ -27,12 +15,12 @@ import torch
 import torch.nn as nn
 from tensorflow import keras
 
-from models.common import (C3, C3Ghost, SPP, SPPF, Bottleneck, BottleneckCSP, C3x, Concat, Conv, CrossConv, DWConv,
+from models.common import (C3, SPP, SPPF, Bottleneck, BottleneckCSP, C3x, Concat, Conv, CrossConv, DWConv,
                            DWConvTranspose2d, Focus, autopad)
 from models.experimental import MixConv2d, attempt_load
 from models.yolo import Detect, Segment
 from utils.activations import SiLU
-from utils.general import make_divisible
+from utils.general import LOGGER, make_divisible, print_args
 
 
 class TFBN(keras.layers.Layer):
@@ -84,7 +72,6 @@ class TFConv(keras.layers.Layer):
         self.act = activations(w.act) if act else tf.identity
 
     def call(self, inputs):
-        print(inputs.shape)
         return self.act(self.bn(self.conv(inputs)))
 
 
@@ -270,62 +257,8 @@ class TFSPPF(keras.layers.Layer):
         y2 = self.m(y1)
         return self.cv2(tf.concat([x, y1, y2, self.m(y2)], 3))
 
-class TFGhostConv(keras.layers.Layer):
-    def __init__(self, c1, c2, k=1, s=1, g=1, act=True, w=None):
-        super(TFGhostConv, self).__init__()
-        c_ = c2 // 2
-        self.cv1 = TFConv(c1, c_, k, s, None, g=g, act=act, w=w.cv1) if g==1 else TFDWConv(c1, c_, k, s, None, act=act, w=w.cv1)
-        self.cv2 = TFDWConv(c_, c_, 5, 1, None, act=act, w=w.cv2)
 
-    def call(self, inputs):
-        print(self.cv1)
-        y = self.cv1(inputs)
-
-        return tf.concat([y, self.cv2(y)], 3)
-
-
-class TFIdentity(tf.keras.layers.Layer):
-    def __init__(self):
-        super(TFIdentity, self).__init__()
-
-    def call(self, x):
-        return x
-
-
-class TFGhostBottleneck(keras.layers.Layer):
-    # Ghost Bottleneck https://github.com/huawei-noah/ghostnet
-    def __init__(self, c1, c2, k=3, s=1, g=1, w=None):
-        super().__init__()
-        c_ = c2 // 2
-        self.conv = keras.Sequential([
-            TFGhostConv(c1, c_, 1, 1, g=g, w=w.conv[0]),  # pw
-            TFDWConv(c_, c_, k, s, act=False, w=w.conv[1]) if s == 2 else TFIdentity(),  # dw
-            TFGhostConv(c_, c2, 1, 1, act=False, w=w.conv[2])  # pw-linear
-        ])
-        self.shortcut = keras.Sequential([
-            TFDWConv(c1, c1, k, s, act=False, w=w.shortcut[0]),
-            TFConv(c1, c2, 1, 1, act=False, w=w.shortcut[1])
-        ]) if s == 2 else TFIdentity()
-
-    def call(self, x):
-        return self.conv(x) + self.shortcut(x)
-
-
-class TFC3Ghost(keras.layers.Layer):
-    # C3 module with TFGhostBottleneck
-    def __init__(self, c1, c2, n=1, shortcut=True, g=1, e=0.5, w=None):
-        super().__init__()
-        c_ = int(c2 * e)  # hidden channels
-        self.cv1 = TFConv(c1, c_, 1, 1, w=w.cv1)
-        self.cv2 = TFConv(c1, c_, 1, 1, w=w.cv2)
-        self.cv3 = TFConv(2 * c_, c2, 1, 1, w=w.cv3)
-        self.m = keras.Sequential([TFGhostBottleneck(c_, c_, w=w.m[j]) for j in range(n)])
-
-    def call(self, x):
-        return self.cv3(tf.concat((self.m(self.cv1(x)), self.cv2(x)), axis=3))
-
-
-class TFBOXDetect(keras.layers.Layer):
+class TFDetect(keras.layers.Layer):
     # TF YOLOv5 Detect layer
     def __init__(self, nc=80, anchors=(), ch=(), imgsz=(640, 640), w=None):  # detection layer
         super().__init__()
@@ -373,123 +306,6 @@ class TFBOXDetect(keras.layers.Layer):
         # return torch.stack((xv, yv), 2).view((1, 1, ny, nx, 2)).float()
         xv, yv = tf.meshgrid(tf.range(nx), tf.range(ny))
         return tf.cast(tf.reshape(tf.stack([xv, yv], 2), [1, 1, ny * nx, 2]), dtype=tf.float32)
-
-
-class TFDetect(keras.layers.Layer):
-    stride = None # build during export
-    export = None
-    # TF yolopose detect layer
-    def __init__(self, nc=1, anchors=(), nkpt=None, ch=(), inplace=True, dw_conv_kpt=False, w=None):
-        super().__init__()
-        self.training = False
-        self.export = True
-        self.stride = [tf.constant([4.]), tf.constant([8.]), tf.constant([16.])]
-        self.nc = nc  # number of classes
-        self.nkpt = nkpt
-        self.dw_conv_kpt = True
-        self.no_det = (nc + 5)  # number of outputs per anchor for box and class, (cls, x, y, w, h, conf)
-        self.no_kpt = 3 * self.nkpt  ## number of outputs per anchor for keypoints
-        self.no = self.no_det + self.no_kpt
-        self.nl = len(anchors)  # number of detection layers
-        self.na = len(anchors[0]) // 2  # number of anchors
-        self.grid = [tf.zeros(1)] * self.nl  # init grid
-        self.flip_test = False
-        a = tf.convert_to_tensor(anchors, dtype=tf.float32)
-        a = tf.reshape(a, (self.nl, -1, 2))
-        self.anchor_grid = tf.reshape(a, (self.nl, 1, -1, 1, 1, 2))
-        # self.register_buffer('anchors', a)  # shape(nl,na,2)
-        # self.register_buffer('anchor_grid', a.clone().reshape(self.nl, 1, -1, 1, 1, 2))  # shape(nl,1,na,1,1,2)
-        self.m = [TFConv2d(x, self.no_det * self.na, 1, w=w.m[i]) for i, x in enumerate(ch)]  # output conv
-        if self.nkpt is not None:
-            if self.dw_conv_kpt:  # keypoint head is slightly more complex
-                self.m_kpt = [
-                    keras.Sequential([TFDWConv(x, x, k=3, w=w.m_kpt[i][0]), TFConv(x, x, w=w.m_kpt[i][1]),
-                                  TFDWConv(x, x, k=3, w=w.m_kpt[i][2]), TFConv(x, x, w=w.m_kpt[i][3]),
-                                  TFDWConv(x, x, k=3, w=w.m_kpt[i][4]), TFConv(x, x, w=w.m_kpt[i][5]),
-                                  TFDWConv(x, x, k=3, w=w.m_kpt[i][6]), TFConv(x, x, w=w.m_kpt[i][7]),
-                                  TFDWConv(x, x, k=3, w=w.m_kpt[i][8]), TFConv(x, x, w=w.m_kpt[i][9]),
-                                  TFDWConv(x, x, k=3, w=w.m_kpt[i][10]), TFConv2d(x, self.no_kpt * self.na, 1, w=w.m_kpt[i][11])]) for i, x in enumerate(ch)]
-            else:  # keypoint head is a single convolution
-                self.m_kpt = [
-                    keras.Sequential([TFConv(x, x, k=3, w=w.m_kpt[i][0]), TFConv(x, x, w=w.m_kpt[i][1]),
-                                     TFConv(x, x, k=3, w=w.m_kpt[i][2]), TFConv(x, x, w=w.m_kpt[i][3]),
-                                     TFConv(x, x, k=3, w=w.m_kpt[i][4]), TFConv(x, x, w=w.m_kpt[i][5]),
-                                     TFConv(x, x, k=3, w=w.m_kpt[i][6]), TFConv(x, x, w=w.m_kpt[i][7]),
-                                     TFConv(x, x, k=3, w=w.m_kpt[i][8]), TFConv(x, x, w=w.m_kpt[i][9]),
-                                     TFConv(x, x, k=3, w=w.m_kpt[i][10]),
-                                     TFConv2d(x, self.no_kpt * self.na, 1, w=w.m_kpt[i][11])]) for i, x in enumerate(ch)]
-
-
-        self.inplace = inplace  # use in-place ops (e.g. slice assignment)
-
-    def call(self, input):
-        x = input.copy()
-        z = []  # inference output
-        # self.training = False if self.export else True
-        self.training = True
-        if False:
-            for i in range(self.nl):
-                if self.nkpt is None or self.nkpt == 0:
-                    x[i] = self.m[i](x[i])
-                else:
-                    tem = self.m[i](x[i])
-                    tem = self.m_kpt[i](x[i])
-                    x[i] = tf.concat((self.m[i](x[i]), self.m_kpt[i](x[i])), axis=3)
-
-                bs, ny, nx, _ = x[i].shape  # x(bs, h, w, c)
-                x[i] = tf.reshape(x[i], (bs, self.na, self.no, ny, nx))
-                x[i] = tf.transpose(x[i], perm=(0, 1, 3, 4, 2))
-                x[i] = tf.linalg.LinearOperatorFullMatrix(x[i])
-                x[i] = tf.convert_to_tensor(x[i].to_dense())
-                x_det = x[i][..., :6]
-                x_kpt = x[i][..., 6:]
-
-                if not self.training:  # inference
-                    if self.grid[i].shape[2:4] != x[i].shape[2:4]:
-                        self.grid[i] = self._make_grid(nx, ny)
-                    kpt_grid_x = self.grid[i][..., 0:1]
-                    kpt_grid_y = self.grid[i][..., 1:2]
-
-                    if self.nkpt == 0:
-                        y = tf.sigmoid(x[i])
-                    else:
-                        y = tf.sigmoid(x_det)
-
-                    if self.inplace:
-                        xy = (y[..., 0:2] * 2. - 0.5 + self.grid[i]) * self.stride[i]  # xy
-                        wh = (y[..., 2:4] * 2) ** 2 * tf.reshape(self.anchor_grid[i], (1, self.na, 1, 1, 2))  # wh
-                        if self.nkpt != 0:
-                            # 生成 shape 为 (bs, na, ny, nx, 17, 5) 的索引数组，用于更新 x_kpt 中的值
-                            # indices = tf.stack(tf.meshgrid(tf.range(bs), tf.range(self.na), tf.range(ny), tf.range(nx), tf.range(51), indexing='ij'), axis=-1)
-                            # 生成 shape 为 (bs, na, ny, nx, 17, 3) 的更新数组
-                            updates = tf.concat([-
-                                (x_kpt[..., 0::3] * 2. - 0.5 + tf.tile(kpt_grid_x, [1, 1, 1, 1, 17])) * self.stride[i],
-                                (x_kpt[..., 1::3] * 2. - 0.5 + tf.tile(kpt_grid_y, [1, 1, 1, 1, 17])) * self.stride[i],
-                                tf.sigmoid(x_kpt[..., 2::3])
-                            ], axis=-1)
-                            # 使用 tf.tensor_scatter_nd_update 函数更新 x_kpt 中的值
-                            # x_kpt = tf.tensor_scatter_nd_update(x_kpt, indices, updates)
-
-                        y = tf.concat((xy, wh, y[..., 4:], updates), axis=-1)
-
-                    else:  # for YOLOv5 on AWS Inferentia https://github.com/ultralytics/yolov5/pull/2953
-                        xy = (y[..., 0:2] * 2. - 0.5 + self.grid[i]) * self.stride[i]  # xy
-                        wh = (y[..., 2:4] * 2) ** 2 * self.anchor_grid[i]  # wh
-                        if self.nkpt != 0:
-                            y[..., 6:] = (y[..., 6:] * 2. - 0.5 + self.grid[i].repeat((1, 1, 1, 1, self.nkpt))) * \
-                                         self.stride[i]  # xy
-                        y = tf.concat((xy, wh, y[..., 4:]), -1)
-
-                    z.append(tf.reshape(y, (bs, -1, self.no)))
-
-        return x if self.training else tf.concat(z, 1)
-
-    @staticmethod
-    def _make_grid(nx=20, ny=20):
-        # yv, xv = torch.meshgrid([torch.arange(ny), torch.arange(nx)])
-        # return torch.stack((xv, yv), 2).view((1, 1, ny, nx, 2)).float()
-        xv, yv = tf.meshgrid(tf.range(nx), tf.range(ny))
-        return tf.cast(tf.reshape(tf.stack([xv, yv], 2), [1, 1, ny, nx, 2]), dtype=tf.float32)
 
 
 class TFSegment(TFDetect):
@@ -550,7 +366,7 @@ class TFConcat(keras.layers.Layer):
 
 
 def parse_model(d, ch, model, imgsz):  # model_dict, input_channels(3)
-    # LOGGER.info(f"\n{'':>3}{'from':>18}{'n':>3}{'params':>10}  {'module':<40}{'arguments':<30}")
+    LOGGER.info(f"\n{'':>3}{'from':>18}{'n':>3}{'params':>10}  {'module':<40}{'arguments':<30}")
     anchors, nc, gd, gw = d['anchors'], d['nc'], d['depth_multiple'], d['width_multiple']
     na = (len(anchors[0]) // 2) if isinstance(anchors, list) else anchors  # number of anchors
     no = na * (nc + 5)  # number of outputs = anchors * (classes + 5)
@@ -568,7 +384,7 @@ def parse_model(d, ch, model, imgsz):  # model_dict, input_channels(3)
         n = max(round(n * gd), 1) if n > 1 else n  # depth gain
         if m in [
                 nn.Conv2d, Conv, DWConv, DWConvTranspose2d, Bottleneck, SPP, SPPF, MixConv2d, Focus, CrossConv,
-                BottleneckCSP, C3, C3x, C3Ghost]:
+                BottleneckCSP, C3, C3x]:
             c1, c2 = ch[f], args[0]
             c2 = make_divisible(c2 * gw, 8) if c2 != no else c2
 
@@ -587,13 +403,10 @@ def parse_model(d, ch, model, imgsz):  # model_dict, input_channels(3)
             if m is Segment:
                 args[3] = make_divisible(args[3] * gw, 8)
             args.append(imgsz)
-            if args[2] == 'nkpt':
-                args[2] = d['nkpt']
         else:
             c2 = ch[f]
 
         tf_m = eval('TF' + m_str.replace('nn.', ''))
-        print(tf_m)
         m_ = keras.Sequential([tf_m(*args, w=model.model[i][j]) for j in range(n)]) if n > 1 \
             else tf_m(*args, w=model.model[i])  # module
 
@@ -601,7 +414,7 @@ def parse_model(d, ch, model, imgsz):  # model_dict, input_channels(3)
         t = str(m)[8:-2].replace('__main__.', '')  # module type
         np = sum(x.numel() for x in torch_m_.parameters())  # number params
         m_.i, m_.f, m_.type, m_.np = i, f, t, np  # attach index, 'from' index, type, number params
-        # LOGGER.info(f'{i:>3}{str(f):>18}{str(n):>3}{np:>10}  {t:<40}{str(args):<30}')  # print
+        LOGGER.info(f'{i:>3}{str(f):>18}{str(n):>3}{np:>10}  {t:<40}{str(args):<30}')  # print
         save.extend(x % i for x in ([f] if isinstance(f, int) else f) if x != -1)  # append to savelist
         layers.append(m_)
         ch.append(c2)
@@ -622,7 +435,7 @@ class TFModel:
 
         # Define model
         if nc and nc != self.yaml['nc']:
-            # LOGGER.info(f"Overriding {cfg} nc={self.yaml['nc']} with nc={nc}")
+            LOGGER.info(f"Overriding {cfg} nc={self.yaml['nc']} with nc={nc}")
             self.yaml['nc'] = nc  # override yaml value
         self.model, self.savelist = parse_model(deepcopy(self.yaml), ch=[ch], model=model, imgsz=imgsz)
 
@@ -638,7 +451,7 @@ class TFModel:
         x = inputs
         for m in self.model.layers:
             if m.f != -1:  # if not from previous layer
-                x = y[m.f] if isinstance(m.f, int) else [x if j == -1 else y[j] for j in m.f]  # from earlier+ layers
+                x = y[m.f] if isinstance(m.f, int) else [x if j == -1 else y[j] for j in m.f]  # from earlier layers
 
             x = m(x)  # run
             y.append(x if m.i in self.savelist else None)  # save output
@@ -758,7 +571,7 @@ def run(
     keras_model = keras.Model(inputs=im, outputs=tf_model.predict(im))
     keras_model.summary()
 
-    print('PyTorch, TensorFlow and Keras models successfully verified.\nUse export.py for TF model export.')
+    LOGGER.info('PyTorch, TensorFlow and Keras models successfully verified.\nUse export.py for TF model export.')
 
 
 def parse_opt():
@@ -769,7 +582,7 @@ def parse_opt():
     parser.add_argument('--dynamic', action='store_true', help='dynamic batch size')
     opt = parser.parse_args()
     opt.imgsz *= 2 if len(opt.imgsz) == 1 else 1  # expand
-
+    print_args(vars(opt))
     return opt
 
 
@@ -780,4 +593,3 @@ def main(opt):
 if __name__ == "__main__":
     opt = parse_opt()
     main(opt)
-

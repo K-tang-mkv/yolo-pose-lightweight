@@ -5,17 +5,21 @@ import torch.nn as nn
 from models.common import DWConv, Conv
 
 anchors = [[10, 13, 16, 30, 33, 23], [30, 61, 62, 45, 59, 119], [116, 90, 156, 198, 373, 326]]
+# anchors = [[19, 27, 44, 40, 38, 94], [96, 68, 86, 152, 180, 137], [140, 301, 303, 264, 238, 542], [436, 615, 739, 380, 925, 792]]
+ch = [64,64,128]
+# ch = [128, 256, 384, 512]
 
 class Detect(nn.Module):
     stride = None  # strides computed during build
     export = False  # onnx export
 
-    def __init__(self, nc=1, anchors=anchors, nkpt=17, ch=[64,64,128], inplace=True, dw_conv_kpt=True):  # detection layer
+    def __init__(self, nc=1, anchors=anchors, nkpt=17, ch=ch, inplace=True, dw_conv_kpt=False):  # detection layer
         super(Detect, self).__init__()
         self.nc = nc  # number of classes
         self.nkpt = nkpt
         self.dw_conv_kpt = dw_conv_kpt
         self.stride = [torch.tensor([4.]), torch.tensor([8.]), torch.tensor([16.])]
+        # self.stride = [torch.tensor([8.]), torch.tensor([16.]), torch.tensor([32.]), torch.tensor([64.])]
         self.no_det=(nc + 5)  # number of outputs per anchor for box and class
         self.no_kpt = 3*self.nkpt ## number of outputs per anchor for keypoints
         self.no = self.no_det+self.no_kpt
@@ -46,11 +50,13 @@ class Detect(nn.Module):
         z = []  # inference output
         self.training = False
         for i in range(self.nl):
+            # x[i] = x[i].reshape((1, x[i].shape[-1], x[i].shape[1], x[i].shape[2]))
+            # x[i] = x[i].permute(0, 3, 1, 2).contiguous()
             # if self.nkpt is None or self.nkpt==0:
             #     x[i] = self.m[i](x[i])
             # else :
             #     x[i] = torch.cat((self.m[i](x[i]), self.m_kpt[i](x[i])), axis=1)
-            #
+
             bs, _, ny, nx, _ = x[i].shape  # x(bs,255,20,20) to x(bs,3,20,20,85)
             # x[i] = x[i].view(bs, self.na, self.no, ny, nx).permute(0, 1, 3, 4, 2).contiguous()
             x_det = x[i][..., :6]
@@ -94,7 +100,39 @@ class Detect(nn.Module):
         return torch.stack((xv, yv), 2).view((1, 1, ny, nx, 2)).float()
 
 def detect(x):
-    pass
+    # x: a list of output from different scales
+    anchors = [[10, 13, 16, 30, 33, 23], [30, 61, 62, 45, 59, 119], [116, 90, 156, 198, 373, 326]]
+    strides = [torch.tensor([4.]), torch.tensor([8.]), torch.tensor([16.])]
+    anchor_grid = torch.tensor(anchors).view(len(x), 1, -1, 1, 1, 2)
+    z = []
+
+    for i in range(len(x)):
+        # x[i] = (1, 3, 48, 48, 57)
+        bs, _, ny, nx, _ = x[i].shape
+        x_det = x[i][..., :6] # bounding box
+        x_kpt = x[i][..., 6:] # keypoints
+
+        y = x_det.sigmoid()
+
+        grid = make_grid(nx, ny).to(x[i].device)
+        kpt_grid_x = grid[..., 0:1]
+        kpt_grid_y = grid[..., 1:2]
+
+        xy = (y[..., 0:2] * 2. - 0.5 + grid) * strides[i]  # xy
+        wh = (y[..., 2:4] * 2) ** 2 * anchor_grid[i].view(1, int(len(anchors[0])/2), 1, 1, 2)  # wh
+
+        x_kpt[..., 0::3] = (x_kpt[..., ::3] * 2. - 0.5 + kpt_grid_x.repeat(1, 1, 1, 1, 17)) * strides[i]  # xy
+        x_kpt[..., 1::3] = (x_kpt[..., 1::3] * 2. - 0.5 + kpt_grid_y.repeat(1, 1, 1, 1, 17)) * strides[i]  # xy
+        x_kpt[..., 2::3] = x_kpt[..., 2::3].sigmoid()
+
+        y = torch.cat((xy, wh, y[..., 4:], x_kpt), dim=-1)
+        z.append(y.view(bs, -1, 57))
+
+    return torch.cat(z, 1)
+
+def make_grid(nx=20, ny=20):
+    yv, xv = torch.meshgrid([torch.arange(ny), torch.arange(nx)])
+    return torch.stack((xv, yv), 2).view((1, 1, ny, nx, 2)).float()
 
 if __name__ == "__main__":
     pass

@@ -1,11 +1,16 @@
+import cv2
 import torch
 import torch.nn as nn
 from torch.utils.mobile_optimizer import optimize_for_mobile
 import argparse
 from pathlib import Path
 import platform
+import numpy as np
+
 
 import models
+from utils.tflite3output_postprocess import Detect
+from utils.general import non_max_suppression
 from utils.activations import Hardswish, SiLU
 from models.experimental import attempt_load
 from utils.general_exp import colorstr, check_img_size, check_requirements, file_size, check_version, check_yaml, check_dataset
@@ -16,9 +21,9 @@ MACOS = platform.system() == 'Darwin'  # macOS environment
 def parse_opt():
     parser = argparse.ArgumentParser() # define a argument parser
     # add argument into the parser
-    parser.add_argument("--weights", type=str, default="../ds_8w.pt", help="model need to be export")
+    parser.add_argument("--weights", type=str, default="../posedet_offical_640.pt", help="model need to be export")
     parser.add_argument("--data", type=str, default="../data/coco_kpts_exp.yaml", help=" ")
-    parser.add_argument("--img-size", type=int, default=[192,192], help="input size need to be exported")
+    parser.add_argument("--img-size", type=int, default=[640,640], help="input size need to be exported")
     parser.add_argument("--device", default="cpu", help='cuda device, i.e. 0 or 0,1,2,3 or cpu')
     parser.add_argument("--include", default=["tflite"], nargs="+", help='torchscript, onnx, openvino, engine, coreml, saved_model, pb, tflite, edgetpu, tfjs, paddle')
     parser.add_argument("--export-nms", default=False, help='export the nms part in ONNX model')
@@ -92,10 +97,19 @@ def export_saved_model(model,
     print(f'\n{prefix} starting export with tensorflow {tf.__version__}...')
     f = str(file).replace('.pt', '_saved_model')
     batch_size, ch, *imgsz = list(im.shape)  # BCHW
-
+    # Load image
+    img = cv2.imread('../test.jpg')[:, :, ::-1]
+    img = cv2.resize(img, (640, 640), interpolation=cv2.INTER_LINEAR)
+    img = img / 255.
+    img = np.asarray(img, dtype=np.float32)
+    img = np.expand_dims(img, 0)
     tf_model = TFModel(cfg=model.yaml, model=model, nc=model.nc, imgsz=imgsz)
     im = tf.zeros((batch_size, *imgsz, ch))  # BHWC order for TensorFlow
-    _ = tf_model.predict(im, tf_nms, agnostic_nms, topk_per_class, topk_all, iou_thres, conf_thres)
+    det = tf_model.predict(img, tf_nms, agnostic_nms, topk_per_class, topk_all, iou_thres, conf_thres)
+    det = [torch.from_numpy(x.numpy()) for x in det]
+    last_Detect = Detect()
+    pred = last_Detect(det)
+    pred = non_max_suppression(pred, kpt_label=True)[0].detach().numpy()
     inputs = tf.keras.Input(shape=(*imgsz, ch), batch_size=None if dynamic else batch_size)
     outputs = tf_model.predict(inputs, tf_nms, agnostic_nms, topk_per_class, topk_all, iou_thres, conf_thres)
     keras_model = tf.keras.Model(inputs=inputs, outputs=outputs)

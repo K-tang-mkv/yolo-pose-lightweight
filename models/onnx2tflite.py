@@ -1,11 +1,16 @@
-import sys
-import os
+import tensorflow as tf
 
-# Import the model optimizer tool from the openvino_dev package
-from openvino.tools.mo import main as mo_main
-import onnx
-from onnx_tf.backend import prepare
-from mltk.utils.shell_cmd import run_shell_cmd
 
+saved_model = "../ds_8w_Detect/"
+saved_file = saved_model+"ds_8w_detect.tflite"
 
 if __name__ == "__main__":
+    converter = tf.lite.TFLiteConverter.from_saved_model(saved_model)
+    converter.target_spec.supported_ops = [
+        tf.lite.OpsSet.TFLITE_BUILTINS,  # enable TensorFlow Lite ops.
+        tf.lite.OpsSet.SELECT_TF_OPS  # enable TensorFlow ops.
+    ]
+    tflite_model = converter.convert()
+
+    with open(saved_file, 'wb') as f:
+        f.write(tflite_model)

@@ -1,4 +1,4 @@
-# <div align="center"> 模型输入输出的处理
+# <div align="center"> 模型输入输出的处理 </div>
 [tflite推理代码参考](../tflite_detect.py)
 
 在导出的tflite模型中，模型的输入是一张图片，以数组的形式，形状为[1, 3, 192, 192],

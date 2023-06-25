@@ -5,6 +5,6 @@
 由华为提出的一种轻量级网络，优于mobilenet。
 
 ### 教程
-- [模型架构](tutorials/network_arch.md)
+- [模型架构](./tutorials/network_arch.md)
 
 - [预处理和后处理]()

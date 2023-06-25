@@ -5,6 +5,6 @@
 由华为提出的一种轻量级网络，优于mobilenet。
 
 ### 教程
-- [模型架构](https://gitlab.51yund.com/ai/yolo-pose-lightweight/-/blob/export_tflite/tutorials/prepostprocess.md)
+- [模型架构](./tutorials/network_arch.md)
 
-- [预处理和后处理]()
+- [预处理和后处理](./tutorials/prepostprocess.md)

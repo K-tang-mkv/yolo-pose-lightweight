@@ -139,16 +139,20 @@ class ComputeLoss:
                     pkpt_x = ps[:, 6::3] * 2. - 0.5
                     pkpt_y = ps[:, 7::3] * 2. - 0.5
                     pkpt_score = ps[:, 8::3]
+                    pkpt_score_conf = pkpt_score.sigmoid()
                     #mask
-                    kpt_mask = (tkpt[i][:, 0::2] != 0)
-                    lkptv += self.BCEcls(pkpt_score, kpt_mask.float()) 
+                    kpt_mask = (tkpt[i][:, 0::2] != 0) & (pkpt_score_conf >= 0.5) # oks 分子需要预测的可见性
+                    kpt_maskv = (tkpt[i][:, 0::2] != 0) # oks分母
+                    lkptv += self.BCEcls(pkpt_score, kpt_mask.float())
                     #l2 distance based loss
                     #lkpt += (((pkpt-tkpt[i])*kpt_mask)**2).mean()  #Try to make this loss based on distance instead of ordinary difference
                     #oks based loss
                     d = (pkpt_x-tkpt[i][:,0::2])**2 + (pkpt_y-tkpt[i][:,1::2])**2
                     s = torch.prod(tbox[i][:,-2:], dim=1, keepdim=True)
-                    kpt_loss_factor = (torch.sum(kpt_mask != 0) + torch.sum(kpt_mask == 0))/torch.sum(kpt_mask != 0)
-                    lkpt += kpt_loss_factor*((1 - torch.exp(-d/(s*(4*sigmas**2)+1e-9)))*kpt_mask).mean()
+                    # kpt_loss_factor = (torch.sum(kpt_mask != 0) + torch.sum(kpt_mask == 0))/torch.sum(kpt_mask != 0)
+                    kpt_loss_factor = 1 / torch.sum(kpt_maskv != 0)
+                    # lkpt += torch.sum(kpt_loss_factor*((1 - torch.exp(-d/(s*(4*sigmas**2)+1e-9)))*kpt_mask))
+                    lkpt += (1-torch.sum(kpt_loss_factor*(torch.exp(-d/(s*(4*sigmas**2)+1e-9))*kpt_mask), 1)).mean()
                     # lkpt += kpt_loss_factor * ((1 - torch.exp(-d / (2 * (s * sigmas) ** 2 + 1e-9))) * kpt_mask).mean()
                 # Objectness
                 tobj[b, a, gj, gi] = (1.0 - self.gr) + self.gr * iou.detach().clamp(0).type(tobj.dtype)  # iou ratio
@@ -205,20 +209,20 @@ class ComputeLoss:
                 gain[2:6] = torch.tensor(p[i].shape)[[3, 2, 3, 2]]  # xyxy gain
 
             # Match targets to anchors
-            t = targets * gain
+            t = targets * gain # denormalize target
             if nt:
                 # Matches
-                r = t[:, :, 4:6] / anchors[:, None]  # wh ratio
+                r = t[:, :, 4:6] / anchors[:, None]  # wh ratio GT_wh / anchor_wh
                 j = torch.max(r, 1. / r).max(2)[0] < self.hyp['anchor_t']  # compare
                 # j = wh_iou(anchors, t[:, 4:6]) > model.hyp['iou_t']  # iou(3,n)=wh_iou(anchors(3,2), gwh(n,2))
-                t = t[j]  # filter
+                t = t[j]  # filter anchors that not match GT box
 
                 # Offsets
-                gxy = t[:, 2:4]  # grid xy
-                gxi = gain[[2, 3]] - gxy  # inverse
-                j, k = ((gxy % 1. < g) & (gxy > 1.)).T
+                gxy = t[:, 2:4]  # grid xy center
+                gxi = gain[[2, 3]] - gxy  # inverse, GT 中心坐标相对于整个特征图的右下角位置
+                j, k = ((gxy % 1. < g) & (gxy > 1.)).T # gxy % 1 即为target中心坐标相对于当前grid左上角的坐标，如果gxy % 1中x_grid<0.5,则考虑当前grid左边的grid
                 l, m = ((gxi % 1. < g) & (gxi > 1.)).T
-                j = torch.stack((torch.ones_like(j), j, k, l, m))
+                j = torch.stack((torch.ones_like(j), j, k, l, m)) # 当前格子加上，下，左,右5个格子
                 t = t.repeat((5, 1, 1))[j]
                 offsets = (torch.zeros_like(gxy)[None] + off[:, None])[j]
             else:
@@ -239,7 +243,7 @@ class ComputeLoss:
             tbox.append(torch.cat((gxy - gij, gwh), 1))  # box
             if self.kpt_label:
                 for kpt in range(self.nkpt):
-                    t[:, 6+2*kpt: 6+2*(kpt+1)][t[:,6+2*kpt: 6+2*(kpt+1)] !=0] -= gij[t[:,6+2*kpt: 6+2*(kpt+1)] !=0]
+                    t[:, 6+2*kpt: 6+2*(kpt+1)][t[:,6+2*kpt: 6+2*(kpt+1)] !=0] -= gij[t[:,6+2*kpt: 6+2*(kpt+1)] !=0] # 每个存在的关键点坐标相对当前网格的偏移量
                 tkpt.append(t[:, 6:-1])
             anch.append(anchors[a])  # anchors
             tcls.append(c)  # class

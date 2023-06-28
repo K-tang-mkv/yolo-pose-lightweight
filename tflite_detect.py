@@ -12,7 +12,7 @@ from onnx_inference.yolo_pose_onnx_inference import post_process
 from utils.general import scale_coords, xyxy2xywh
 from utils.plots import plot_one_box, colors
 
-img_file = './onnx_inference/img.png'
+img_file = './test.jpg'
 dst_path = './output/'
 
 os.makedirs(dst_path, exist_ok=True)
@@ -26,10 +26,11 @@ if __name__ == "__main__":
     print("all good")
 
     # Load image
-    img = cv2.imread(img_file)[:, :, ::-1]
+    # img = cv2.imread(img_file)[:, :, ::-1]
     im0 = cv2.imread(img_file)
-    img = cv2.resize(img, (192, 192), interpolation=cv2.INTER_LINEAR)
-    img = img / 255
+    img = letterbox(im0, (192,192),auto=False)[0]
+    # img = cv2.resize(img, (192, 192), interpolation=cv2.INTER_LINEAR)
+    img = img / 255.0
     img = np.asarray(img, dtype=np.float32)
     img = np.expand_dims(img, 0)
     img = img.transpose(0, 3, 1, 2)
@@ -37,7 +38,7 @@ if __name__ == "__main__":
     interpreter.set_tensor(input_details[0]['index'], img)
     interpreter.invoke()
     # pred = torch.from_numpy(interpreter.get_tensor(output_details[0]['index']))
-    output = [torch.from_numpy(interpreter.get_tensor(output_details[i]['index'])) for i in range(len(output_details))]
+    output = [torch.from_numpy(interpreter.get_tensor(index)) for index in sorted(i['index'] for i in output_details)]
     # last_Detect = Detect()
     # pred = last_Detect(output)
     # det = post_process(det)

@@ -147,6 +147,7 @@ class ComputeLoss:
                     #l2 distance based loss
                     #lkpt += (((pkpt-tkpt[i])*kpt_mask)**2).mean()  #Try to make this loss based on distance instead of ordinary difference
                     #oks based loss
+                    tem_y = tkpt[i][:, 1::2]
                     d = (pkpt_x-tkpt[i][:,0::2])**2 + (pkpt_y-tkpt[i][:,1::2])**2
                     s = torch.prod(tbox[i][:,-2:], dim=1, keepdim=True)
                     # kpt_loss_factor = (torch.sum(kpt_mask != 0) + torch.sum(kpt_mask == 0))/torch.sum(kpt_mask != 0)

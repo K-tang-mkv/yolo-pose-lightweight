@@ -90,7 +90,9 @@ class Detect(nn.Module):
                     self.grid[i] = self._make_grid(nx, ny).to(x[i].device)  #对应尺度下的特征图划分nx*ny的网格
                 kpt_grid_x = self.grid[i][..., 0:1]
                 kpt_grid_y = self.grid[i][..., 1:2]
-
+                tem = kpt_grid_y.repeat(1,1,1,1,17)
+                tem_y = x_kpt[..., 1::3]
+                tem_y_0 = tem_y[0][0]
                 if self.nkpt == 0:
                     y = x[i].sigmoid()
                 else:
